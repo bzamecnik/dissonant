@@ -53,7 +53,7 @@ class Cook2002:
     """
     a = 1.2
     b = 4.0
-    # c ~= 3.5350857058976985 (3.53 in the paper with is not precise)
+    # c ~= 3.5350857058976985 (3.53 in the paper which is not precise)
     c = 1 / (np.exp(-a) - np.exp(-b))
 
     def dissonance_pair(self, f_1, f_2, a_1, a_2):

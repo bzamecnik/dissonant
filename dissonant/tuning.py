@@ -2,7 +2,7 @@ import numpy as np
 
 __all__ = ['harmonic_tone', 'freq_to_pitch', 'pitch_to_freq']
 
-def harmonic_tone(base_freqs, n_partials=1):
+def harmonic_tone(base_freqs, n_partials=1, profile='exp'):
     """
     Creates a harmonic tone out of one or more base frequencies.
 
@@ -21,12 +21,20 @@ def harmonic_tone(base_freqs, n_partials=1):
     The amplitude values for a single harmonic tone are going down
     inversely in this case.
     """
-    base_freqs = np.atleast_2d(base_freqs)
-    idx = 1 + np.arange(n_partials).reshape(1, -1)
-    freqs = np.outer(base_freqs, idx)
+    idx = 1 + np.arange(n_partials)
+    freqs = np.outer(np.atleast_2d(base_freqs), idx.reshape(1, -1))
     # eg. amplitudes inversely going down
-    amplitudes = 1 / np.tile(idx[0], (base_freqs.shape[1], 1))
-    # amplitudes = np.ones(freqs.shape)
+    if profile == 'exp':
+        # exponential fall-off
+        amp_profile = 0.88 ** idx
+    elif profile == 'inverse':
+        amp_profile = 1 / idx
+    elif profile == 'constant':
+        amp_profile = np.ones(len(idx))
+    else:
+        raise ValueError("Amplitude profile can be ['exp', 'inverse', 'constant'], was", profile)
+
+    amplitudes = np.tile(amp_profile, (len(base_freqs), 1))
     return freqs, amplitudes
 
 def freq_to_pitch(freq, base_freq=440.0, steps_per_octave=12):
