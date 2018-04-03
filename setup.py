@@ -9,11 +9,16 @@ setup(name='dissonant',
       zip_safe=False,
       py_modules=['dissonant'],
       install_requires=[
-        'jupyter',
-        'matplotlib',
         'numpy',
-        'pandas'
       ],
+      extra_requires={
+        'notebooks': [
+            'ipywidgets',
+            'jupyter',
+            'matplotlib',
+            'scipy',
+        ]
+      },
       setup_requires=['setuptools-markdown'],
       long_description_markdown_filename='README.md',
       classifiers=[
