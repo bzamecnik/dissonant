@@ -1,13 +1,13 @@
 from setuptools import setup
 
 setup(name='dissonant',
-      version='0.1',
+      version='0.1.1',
       description='Musical chord dissonance models',
       url='https://github.com/bzamecnik/dissonant',
       author='Bohumir Zamecnik',
       author_email='bohumir.zamecnik@gmail.com',
       zip_safe=False,
-      py_modules=['dissonant'],
+      packages=['dissonant'],
       install_requires=[
         'numpy',
       ],
