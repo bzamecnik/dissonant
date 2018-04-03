@@ -14,6 +14,16 @@ Why `dissonant`? PyPI package `dissonance` was already taken.
 
 ## Usage
 
+Dissonance of a C major chord with harmonic tones using the Sethares1993 model:
+
+```
+from dissonant import harmonic_tone, dissonance, pitch_to_freq
+h_freqs, h_amps = harmonic_tone(pitch_to_freq([0, 4, 7, 12]), n_partials=10)
+d = dissonance(h_freqs, h_amps, model='sethares1993')
+```
+
+Dissonance curve of a sliding interval of two harmonic tones: see [notebooks/dissonance_curve.ipynb](notebooks/dissonance_curve.ipynb).
+
 ## Papers
 
 - [1965, Plomp, Levelt - Tonal Consonance and Critical Bandwidth](http://www.mpi.nl/world/materials/publications/levelt/Plomp_Levelt_Tonal_1965.pdf)
