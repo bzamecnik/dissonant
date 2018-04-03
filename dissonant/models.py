@@ -6,6 +6,9 @@ __all__ = [
 ]
 
 class Sethares1993:
+    """
+    Amplitude fall-off: exponential with base 0.88 starting from 1.0.
+    """
     a = 3.5
     b = 5.75
     d_max = 0.24
@@ -95,10 +98,13 @@ class Cook2009:
     - logarithm should be of base 2
     - log2(f_2 / f_1) needs to be multiplied by 12 to get the 12-TET semitone
       interval
+
+    It also contains a model of tension of a triad.
     """
     beta_1 = -0.8
     beta_2 = -1.6
     beta_3 = 4.0
+    alpha = 0.6
 
     def dissonance_pair(self, f_1, f_2, a_1, a_2):
         spl = a_1 * a_2
@@ -106,6 +112,13 @@ class Cook2009:
         x = 12 * np.log2(f_2 / f_1)
         d = np.exp(self.beta_1 * x) - np.exp(self.beta_2 * x)
         return spl * self.beta_3 * d
+
+    def triad_tension(self, f_1, f_2, f_3, a_1, a_2, a_3):
+        x = np.log2(f_2 / f_1)
+        y = np.log2(f_3 / f_2)
+        # originally named v (greek nu)
+        spl = a_1 * a_2 * a_3
+        return spl * exp(-((y - x) / self.alpha)**2)
 
 models = {
     'sethares1993': Sethares1993(),
