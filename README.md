@@ -82,7 +82,7 @@ First, he explicitly parameterizes the data of PlompLevelt1965 (for a pair of si
 Dissonance `d(x)` for the difference `x` between a pair of frequencies. This ignores the absolute frequencies.
 
 ```
-d(x) = exp(-a * x) * exp(-b * x)
+d(x) = exp(-a * x) - exp(-b * x)
 Constants:
 a = 3.5
 b = 5.75
@@ -110,7 +110,7 @@ Expressed in terms of `d(x)`:
 d_pair(f_1, f_2, a_1, a_2) = a_1 * a_2 * d((f_2 - f_1) * d_max / (s_1 * f_1 + s_2))
 ```
 
-Model of dissonance of a single complex tone (containing various partials) is just the sum of dissonances for all pairs of partials. In case the partials are integer multiples of a base frequency we can that tone "harmonic", otherwise just a general "timbre".
+Model of dissonance of a single complex tone (containing various partials) is just the sum of dissonances for all pairs of partials. In case the partials are integer multiples of a base frequency we can call tone "harmonic", otherwise just a general "timbre".
 
 ```
 freqs = (f_1, f_2, ... f_n)
@@ -192,12 +192,18 @@ Note there's an additional `0.5` factor in the Vassilakis2001 model compared to 
 
 ### Cook2002
 
-Dissonance model (Cook2002, Appendix 2, page 276 and on):
+Dissonance model (Cook2002, Appendix 2, page 276 and on, eg. A2-1):
 
 ```
+Original - wrong:
 d_pair(x, a_1, a_2) =
   mu_a = (a_1 + a_2) / 2
-  mu_a * c * (exp(-a * x) - exp(-b * x))
+  mu_a * (exp(-a * x) - exp(-b * x))
+
+Fixed:
+  d_pair(x, a_1, a_2) =
+    mu_a = (a_1 + a_2) / 2
+    mu_a * c * (exp(-a * x) - exp(-b * x))
 
 Where:
 mu_a ... mean amplitude, within [0.0; 1.0]
@@ -223,11 +229,14 @@ Note that in the article it's actually defined in a wrong way:
 - `log2(f_2 / f_1)` needs to be multiplied by 12 to get the 12-TET semitone interval
 - there should be bracket, not floor around the difference of exponentials (probably a printing error)
 
+Note: for the sake of readability we replace here original greek `nu` with `v`.
+
 ```
 Original - wrong:
 d_pair(f_1, f_2, a_1, a_2) =
   x = log(f_2 / f_1)
-  a_1 * a_2 * beta_3 *
+  v = a_1 * a_2
+  v * beta_3 *
   floor(
     exp(-beta_1 * x ^ gamma) -
     exp(-beta_2 * x ^ gamma))
@@ -235,7 +244,8 @@ d_pair(f_1, f_2, a_1, a_2) =
 Fixed:
 d_pair(f_1, f_2, a_1, a_2) =
   x = 12 * log2(f_2 / f_1)
-  a_1 * a_2 * beta_3 *
+  v = a_1 * a_2
+  v * beta_3 *
   (exp(beta_1 * x ^ gamma) -
    exp(beta_2 * x ^ gamma))
 
@@ -246,31 +256,45 @@ beta_3 = 4.0
 gamma = 1.25
 ```
 
-Total dissonance of a chords is the sum of dissonances of all unique pairs of partials.
+Total dissonance of a chords is the sum of dissonances of all pairs of partials.
 
 ### Cook2009
 
 Simplified version of Cook2006. Still the definition is wrong (see above).
 
-There's no gamma exponent
+There's no gamma exponent.
 
 ```
 Original - wrong:
 d_pair(f_1, f_2, a_1, a_2) =
   x = log(f_2 / f_1)
-  a_1 * a_2 * beta_3 *
-  (exp(-beta_1 * x ^ gamma) -
-   exp(-beta_2 * x ^ gamma))
+  v = a_1 * a_2
+  v * beta_3 *
+  (exp(-beta_1 * x) -
+   exp(-beta_2 * x))
 
 Fixed:
 d_pair(f_1, f_2, a_1, a_2) =
   x = 12 * log2(f_2 / f_1)
-  a_1 * a_2 * beta_3 *
-  (exp(beta_1 * x ^ gamma) -
-   exp(beta_2 * x ^ gamma))
+  v = a_1 * a_2
+  v * beta_3 *
+  (exp(beta_1 * x) -
+   exp(beta_2 * x))
 
 Constants:
 beta_1 = -0.8 # "interval of maximal dissonance"
 beta_2 = -1.6 # "steepness of the fall from maximal dissonance"
 beta_3 = 4.0
+```
+
+Tension of a triad (not implemented yet):
+
+```
+tension(f_1, f_2, f_3) =
+  x = log(f_2 / f_1)
+  y = log(f_3 / f_2)
+  v = a_1 * a_2 * a_3
+  v * exp(-((y - x) / alpha)^2)
+
+alpha = ~0.6
 ```
